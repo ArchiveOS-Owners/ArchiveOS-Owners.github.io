@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="tr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ArchiveOS | Kawaii Anime Distro</title>
+    <link rel="icon" type="image/x-icon" href="arona.png">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ba-blue: #4dabf7; --ba-dark-blue: #1c7ed6; --ba-pink: #faa2c1; --ba-yellow: #ffe066;
+            --bg-body: #1a1b1e; --bg-card: #25262b; --bg-wave: #141517;
+            --text-main: #e9ecef; --text-sub: #a6a7ab;
+            --soft-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            --border-radius: 24px; --dot-color: rgba(77, 171, 247, 0.15);
+        }
+
+        [data-theme="light"] {
+            --bg-body: #f8f9fa; --bg-card: #ffffff; --bg-wave: #e7f5ff;
+            --text-main: #495057; --text-sub: #868e96;
+            --soft-shadow: 0 8px 24px rgba(149, 157, 165, 0.2);
+            --dot-color: rgba(77, 171, 247, 0.1);
+        }
+
+        body {
+            margin: 0; padding: 0; font-family: 'Quicksand', 'Nunito', sans-serif;
+            background-color: var(--bg-body); color: var(--text-main);
+            overflow-x: hidden; transition: 0.3s;
+            background-image: radial-gradient(var(--dot-color) 1px, transparent 1px), radial-gradient(var(--ba-pink) 1px, transparent 1px);
+            background-size: 40px 40px; background-position: 0 0, 20px 20px;
+        }
+
+        .wave-container { position: absolute; top: 0; left: 0; width: 100%; overflow: hidden; line-height: 0; z-index: -1; }
+        .wave-container svg { position: relative; display: block; width: calc(100% + 1.3px); height: 500px; fill: var(--bg-wave); transition: fill 0.3s; }
+
+        header { min-height: 85vh; display: flex; align-items: center; justify-content: space-between; padding: 50px 10%; position: relative; }
+        .hero-text { max-width: 550px; z-index: 2; }
+        h1 { font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 4.5rem; color: var(--ba-blue); margin: 0; text-transform: uppercase; letter-spacing: -2px; text-shadow: 3px 3px 0px var(--ba-pink); }
+        .badge-kawaii { background: var(--ba-pink); color: white; padding: 5px 15px; border-radius: 20px; font-size: 0.9rem; font-weight: bold; display: inline-block; margin-bottom: 10px; box-shadow: 0 4px 10px rgba(250, 162, 193, 0.4); }
+        .subtitle { font-size: 1.3rem; margin: 25px 0; color: var(--text-main); font-weight: 500; background: var(--bg-card); padding: 10px 20px; border-radius: var(--border-radius); display: inline-block; backdrop-filter: blur(5px); box-shadow: var(--soft-shadow); }
+
+        .download-tabs { margin-top: 30px; background: var(--bg-card); border-radius: 20px; padding: 8px; display: inline-flex; flex-wrap: wrap; gap: 5px; box-shadow: var(--soft-shadow); border: 2px solid var(--ba-blue); }
+        .tab-btn { padding: 10px 20px; border-radius: 15px; border: none; background: transparent; color: var(--text-sub); font-weight: 800; cursor: pointer; transition: 0.3s; font-family: 'Nunito'; }
+        .tab-btn.active { background: var(--ba-blue); color: white; box-shadow: 0 4px 12px rgba(77, 171, 247, 0.4); }
+        .tab-btn.special-btn.active { background: var(--ba-pink); box-shadow: 0 4px 12px rgba(250, 162, 193, 0.4); }
+
+        .tab-content { display: none; margin-top: 25px; animation: slideUp 0.4s ease; }
+        .tab-content.active { display: block; }
+
+        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .btn { padding: 15px 35px; border-radius: 50px; text-decoration: none; font-weight: 800; font-family: 'Nunito', sans-serif; transition: 0.3s; font-size: 1.1rem; display: inline-flex; align-items: center; gap: 10px; }
+        .btn-main { background: linear-gradient(45deg, var(--ba-blue), var(--ba-dark-blue)); color: white; box-shadow: 0 10px 20px -10px rgba(77, 171, 247, 0.7); border: 3px solid transparent; }
+        .btn-alt { background: var(--bg-card); color: var(--ba-blue); border: 3px solid var(--ba-blue); box-shadow: var(--soft-shadow); margin-left: 15px; }
+        .btn:hover { transform: translateY(-5px); }
+
+        .anime-img { max-height: 75vh; filter: drop-shadow(0 0 30px rgba(77, 171, 247, 0.3)); animation: float 6s ease-in-out infinite; }
+        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-20px); } }
+
+        .top-controls { position: absolute; top: 30px; right: 10%; display: flex; gap: 15px; z-index: 10; }
+        .control-box { background: var(--bg-card); padding: 10px 20px; border-radius: 30px; box-shadow: var(--soft-shadow); font-weight: bold; display: flex; align-items: center; }
+        .theme-toggle { cursor: pointer; font-size: 1.2rem; user-select: none; }
+        .lang-switch span { cursor: pointer; margin: 0 5px; color: var(--text-sub); }
+        .lang-switch .active { color: var(--ba-blue); font-weight: 900; }
+
+        .screenshot-showcase { text-align: center; padding: 60px 10%; }
+        .section-title { font-family: 'Nunito', sans-serif; font-weight: 900; font-size: 2.2rem; color: var(--ba-blue); margin-bottom: 30px; text-shadow: 2px 2px 0 var(--ba-yellow); display: inline-block; background: var(--bg-card); padding: 10px 30px; border-radius: 50px; box-shadow: var(--soft-shadow); }
+        .browser-mockup { max-width: 900px; margin: 0 auto; border-radius: var(--border-radius); box-shadow: 0 20px 50px rgba(0,0,0,0.4); overflow: hidden; background: var(--bg-card); border: 4px solid var(--ba-blue); }
+        .browser-header { background: var(--ba-blue); padding: 12px; display: flex; gap: 8px; }
+        .browser-dot { width: 12px; height: 12px; background: rgba(255,255,255,0.7); border-radius: 50%; }
+        .screenshot-img { width: 100%; height: auto; display: block; }
+
+        .features { padding: 50px 10%; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; }
+        .card { background: var(--bg-card); padding: 40px; border-radius: 30px; box-shadow: var(--soft-shadow); transition: 0.4s; text-align: center; border: 2px solid transparent; }
+        .card:hover { transform: translateY(-15px); border-color: var(--ba-pink); }
+        .card-icon { font-size: 3rem; margin-bottom: 20px; display: inline-block; padding: 20px; background: rgba(77, 171, 247, 0.1); border-radius: 50%; color: var(--ba-blue); }
+
+        .content-container { max-width: 900px; margin: 0 auto 50px; padding: 0 5%; }
+        .quote-box { margin: 50px auto; padding: 30px; border: 3px dashed var(--ba-pink); background: rgba(250, 162, 193, 0.05); text-align: center; border-radius: var(--border-radius); font-style: italic; color: var(--ba-blue); position: relative; }
+        .disclaimer-box { background: rgba(255, 224, 102, 0.1); border-left: 5px solid var(--ba-yellow); padding: 20px; border-radius: 15px; margin-bottom: 30px; font-size: 0.9rem; }
+
+        .old-versions-container { background: var(--bg-card); border-radius: var(--border-radius); padding: 30px; box-shadow: var(--soft-shadow); border: 2px solid rgba(255,255,255,0.05); }
+        .version-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; margin-bottom: 10px; background: rgba(0,0,0,0.2); border-radius: 15px; }
+        .version-link { color: var(--ba-pink); text-decoration: none; font-weight: 700; padding: 5px 15px; background: rgba(250, 162, 193, 0.1); border-radius: 20px; transition: 0.3s; }
+        .version-link:hover { background: var(--ba-pink); color: white; }
+
+        footer { text-align: center; padding: 40px; background: var(--ba-blue); color: white; font-weight: 600; margin-top: 50px; }
+
+        @media (max-width: 768px) {
+            header { flex-direction: column-reverse; text-align: center; padding-top: 150px; gap: 40px; }
+            h1 { font-size: 3rem; }
+            .top-controls { width: 90%; left: 5%; justify-content: center; }
+            .btn-alt { margin-left: 0; margin-top: 10px; }
+            .btn-group { display: flex; flex-direction: column; align-items: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="wave-container">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path d="M0,224L48,213.3C96,203,192,181,288,186.7C384,192,480,224,576,218.7C672,213,768,171,864,165.3C960,160,1056,192,1152,197.3C1248,203,1344,181,1392,170.7L1440,160L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z"></path></svg>
+    </div>
+
+    <div class="top-controls">
+        <div class="control-box theme-toggle" onclick="toggleTheme()" id="theme-icon">🌙</div>
+        <div class="control-box lang-switch">
+            <span id="tr-btn" class="active" onclick="toggleLang('tr')">TR</span> |
+            <span id="en-btn" onclick="toggleLang('en')">EN</span>
+        </div>
+    </div>
+
+    <header>
+        <div class="hero-text">
+            <span class="badge-kawaii" id="badge-text">✨ Blue Archive Inspired ✨</span>
+            <h1>Archive OS</h1>
+            <p class="subtitle" id="hero-sub">Blue Archive'dan Fırlamış Gibi!</p>
+
+            <div class="download-tabs">
+                <button class="tab-btn special-btn active" onclick="openTab(event, 'junko')" id="tab-junko">JUNKO</button>
+                <button class="tab-btn" onclick="openTab(event, 'recommended')" id="tab-std">RECOMMENDED</button>
+                <button class="tab-btn" onclick="openTab(event, 'gaming')" id="tab-game">GAMING</button>
+                <button class="tab-btn" onclick="openTab(event, 'lite')" id="tab-lite">LITE</button>
+            </div>
+
+            <div id="junko" class="tab-content active">
+                <div class="btn-group">
+                    <a href="https://drive.google.com/file/d/16vZizsB9eaGhJmXpLI6APkA-vMgsZ7Cy/view?usp=sharing" class="btn btn-main" style="background: var(--ba-pink)" id="dl-btn-junko"><span>🍔 Junko Edition ISO</span></a>
+                    <a href="https://github.com/ArchiveOS-Owners" class="btn btn-alt"><span>🐙 GitHub</span></a>
+                </div>
+            </div>
+
+            <div id="recommended" class="tab-content">
+                <div class="btn-group">
+                    <a href="https://mega.nz/file/yoISnTBC#po4-JSDhZOEqJvWR58WUMtqbXCQpRAAJ1YTyC8waG8M" class="btn btn-main" id="dl-btn-std"><span>☁️ Standard ISO</span></a>
+                    <a href="https://github.com/ArchiveOS-Owners" class="btn btn-alt"><span>🐙 GitHub</span></a>
+                </div>
+            </div>
+
+            <div id="gaming" class="tab-content">
+                <div class="btn-group">
+                    <a href="https://mega.nz/file/zsIn3ZhJ#7qysSV0VDVLtJl2pMcbkWhGafN-enMuzW1_39U-i25Q" class="btn btn-main" style="background: #7950f2" id="dl-btn-game"><span>🎮 Gaming ISO</span></a>
+                    <a href="https://github.com/ArchiveOS-Owners" class="btn btn-alt"><span>🐙 GitHub</span></a>
+                </div>
+            </div>
+
+            <div id="lite" class="tab-content">
+                <div class="btn-group">
+                    <a href="https://mega.nz/file/T8pxiSZS#lTRiep_7t6QYLiDm4882Eu-z7MF9Z-BLyhh2TloZTYs" class="btn btn-main" style="background: #40c057" id="dl-btn-lite"><span>🍃 Lite ISO</span></a>
+                    <a href="https://github.com/ArchiveOS-Owners" class="btn btn-alt"><span>🐙 GitHub</span></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="anime-img-container">
+            <img src="archiveos.png" alt="Arona" class="anime-img">
+        </div>
+    </header>
+
+    <section class="screenshot-showcase">
+        <h2 class="section-title" id="ss-junko-title">🎨 Junko Edition: Arayüz</h2>
+        <div class="browser-mockup">
+            <div class="browser-header">
+                <div class="browser-dot" style="background:#ff5f56"></div>
+                <div class="browser-dot" style="background:#ffbd2e"></div>
+                <div class="browser-dot" style="background:#27c93f"></div>
+            </div>
+            <img src="junko.png" alt="Junko Screenshot" class="screenshot-img">
+        </div>
+    </section>
+
+    <section class="screenshot-showcase">
+        <h2 class="section-title" id="ss-std-title">🎨 Standard Edition: Arayüz</h2>
+        <div class="browser-mockup">
+            <div class="browser-header">
+                <div class="browser-dot" style="background:#ff5f56"></div>
+                <div class="browser-dot" style="background:#ffbd2e"></div>
+                <div class="browser-dot" style="background:#27c93f"></div>
+            </div>
+            <img src="standart.jpg" alt="Standard Screenshot" class="screenshot-img">
+        </div>
+    </section>
+
+    <section class="screenshot-showcase">
+        <h2 class="section-title" id="ss-game-title">🎨 Gaming Edition: Arayüz</h2>
+        <div class="browser-mockup">
+            <div class="browser-header">
+                <div class="browser-dot" style="background:#ff5f56"></div>
+                <div class="browser-dot" style="background:#ffbd2e"></div>
+                <div class="browser-dot" style="background:#27c93f"></div>
+            </div>
+            <img src="gaming.jpg" alt="Gaming Screenshot" class="screenshot-img">
+        </div>
+    </section>
+
+    <section class="screenshot-showcase">
+        <h2 class="section-title" id="ss-lite-title">🎨 Lite Edition: Arayüz</h2>
+        <div class="browser-mockup">
+            <div class="browser-header">
+                <div class="browser-dot" style="background:#ff5f56"></div>
+                <div class="browser-dot" style="background:#ffbd2e"></div>
+                <div class="browser-dot" style="background:#27c93f"></div>
+            </div>
+            <img src="lite.jpg" alt="Lite Screenshot" class="screenshot-img">
+        </div>
+    </section>
+
+    <section class="features">
+        <div class="card">
+            <div class="card-icon">🎮</div>
+            <h3 id="f1-t">Oyun Odaklı Optimize</h3>
+            <p id="f1-d">Steam, Lutris, Heroic - hepsi hazır! Sensei için sorunsuz oyun deneyimi.</p>
+        </div>
+        <div class="card">
+            <div class="card-icon">⚡</div>
+            <h3 id="f2-t">Günlük Kullanıma Uygun</h3>
+            <p id="f2-d">Hafif, hızlı ve optimize edilmiş sevimli arayüz.</p>
+        </div>
+        <div class="card">
+            <div class="card-icon">🎀</div>
+            <h3 id="f3-t">Blue Archive Esintisi</h3>
+            <p id="f3-d">Özel ikonlar ve temalar sensei'ler için özenle yapıldı.</p>
+        </div>
+    </section>
+
+    <div class="content-container">
+        <div class="quote-box" id="quote">"Sensei, bu ISO çok kawaii!" - Arona</div>
+        <div class="disclaimer-box" id="warning-text">⚠️ <strong>UYARI:</strong> ArchiveOS, Blue Archive'dan esinlenilmiş bir Linux dağıtımıdır. Tüm hakları Nexon/Yostar'a aittir.</div>
+        <div class="old-versions-container">
+            <h2 class="old-versions-title" id="ov-title">📦 Eski Sürümler</h2>
+            <div class="version-item"><span>ArchiveOS beta 3</span><a href="https://drive.google.com/file/d/1BpnuXc0MnbYv1ITCs_TIKhtyh9S7Iycz/view?usp=drive_link" class="version-link" id="ver-btn-1">İndir</a></div>
+            <div class="version-item"><span>ArchiveOS beta 2</span><a href="https://drive.google.com/file/d/1CoKIX1tjQJ4ZZVjxCpCiDgM11X37it02/view?usp=drive_link" class="version-link" id="ver-btn-2">İndir</a></div>
+            <div class="version-item"><span>ArchiveOS beta 1</span><a href="https://drive.google.com/file/d/1CNn68ws5scY3KZeNlD4D0cXmHlFVWpPd/view?usp=drive_link" class="version-link" id="ver-btn-3">İndir</a></div>
+        </div>
+    </div>
+
+    <footer id="footer-text">&copy; 2026 ArchiveOS Projesi. Sensei'ler için 💙 ile yapıldı.</footer>
+
+    <script>
+        function openTab(evt, tabName) {
+            let i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabcontent.length; i++) tabcontent[i].classList.remove("active");
+            tablinks = document.getElementsByClassName("tab-btn");
+            for (i = 0; i < tablinks.length; i++) tablinks[i].classList.remove("active");
+            document.getElementById(tabName).classList.add("active");
+            evt.currentTarget.classList.add("active");
+        }
+
+        const content = {
+            tr: {
+                hero: "Blue Archive'dan Fırlamış Gibi!",
+                junko: "🍔 Junko Edition ISO",
+                std: "☁️ Standard ISO",
+                game: "🎮 Gaming ISO",
+                lite: "🍃 Lite ISO",
+                ssJunko: "🎨 Junko Edition: Arayüz",
+                ssStd: "🎨 Standard Edition: Arayüz",
+                ssGame: "🎨 Gaming Edition: Arayüz",
+                ssLite: "🎨 Lite Edition: Arayüz",
+                f1t: "Oyun Odaklı Optimize", f1d: "Steam, Lutris, Heroic - hepsi hazır!",
+                f2t: "Günlük Kullanıma Uygun", f2d: "Hafif, hızlı ve sevimli arayüz.",
+                f3t: "Blue Archive Esintisi", f3d: "Sensei'ler için özel temalar!",
+                quote: "\"Sensei, bu ISO çok kawaii!\" - Arona",
+                ovTitle: "📦 Eski Sürümler",
+                verBtn: "İndir",
+                warning: "⚠️ <strong>UYARI:</strong> ArchiveOS, Blue Archive'dan esinlenilmiş bir Linux dağıtımıdır. Tüm hakları Nexon/Yostar'a aittir.",
+                footer: "© 2026 ArchiveOS Projesi. Sensei'ler için 💙 ile yapıldı."
+            },
+            en: {
+                hero: "Straight Outta Blue Archive!",
+                junko: "🍔 Junko Edition ISO",
+                std: "☁️ Standard ISO",
+                game: "🎮 Gaming ISO",
+                lite: "🍃 Lite ISO",
+                ssJunko: "🎨 Junko Edition: Interface",
+                ssStd: "🎨 Standard Edition: Interface",
+                ssGame: "🎨 Gaming Edition: Interface",
+                ssLite: "🎨 Lite Edition: Interface",
+                f1t: "Gaming Optimized", f1d: "Steam, Lutris, Heroic - all ready!",
+                f2t: "Daily Driver Ready", f2d: "Lightweight, fast, and cute interface.",
+                f3t: "Blue Archive Vibe", f3d: "Custom themes made for Sensei!",
+                quote: "\"Sensei, this ISO is so kawaii!\" - Arona",
+                ovTitle: "📦 Old Versions",
+                verBtn: "Download",
+                warning: "⚠️ <strong>WARNING:</strong> ArchiveOS is a Linux distribution inspired by Blue Archive. Copyrights belong to Nexon/Yostar.",
+                footer: "© 2026 ArchiveOS Project. Made with 💙 for Senseis."
+            }
+        };
+
+        function toggleLang(lang) {
+            document.getElementById('tr-btn').classList.toggle('active', lang === 'tr');
+            document.getElementById('en-btn').classList.toggle('active', lang === 'en');
+
+            document.getElementById('hero-sub').innerText = content[lang].hero;
+            document.getElementById('dl-btn-junko').querySelector('span').innerText = content[lang].junko;
+            document.getElementById('dl-btn-std').querySelector('span').innerText = content[lang].std;
+            document.getElementById('dl-btn-game').querySelector('span').innerText = content[lang].game;
+            document.getElementById('dl-btn-lite').querySelector('span').innerText = content[lang].lite;
+
+            document.getElementById('ss-junko-title').innerText = content[lang].ssJunko;
+            document.getElementById('ss-std-title').innerText = content[lang].ssStd;
+            document.getElementById('ss-game-title').innerText = content[lang].ssGame;
+            document.getElementById('ss-lite-title').innerText = content[lang].ssLite;
+
+            document.getElementById('f1-t').innerText = content[lang].f1t;
+            document.getElementById('f1-d').innerText = content[lang].f1d;
+            document.getElementById('f2-t').innerText = content[lang].f2t;
+            document.getElementById('f2-d').innerText = content[lang].f2d;
+            document.getElementById('f3-t').innerText = content[lang].f3t;
+            document.getElementById('f3-d').innerText = content[lang].f3d;
+
+            document.getElementById('quote').innerText = content[lang].quote;
+            document.getElementById('ov-title').innerText = content[lang].ovTitle;
+            document.getElementById('warning-text').innerHTML = content[lang].warning;
+            document.getElementById('footer-text').innerText = content[lang].footer;
+
+            document.getElementById('ver-btn-1').innerText = content[lang].verBtn;
+            document.getElementById('ver-btn-2').innerText = content[lang].verBtn;
+            document.getElementById('ver-btn-3').innerText = content[lang].verBtn;
+        }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const isLight = html.getAttribute('data-theme') === 'light';
+            html.setAttribute('data-theme', isLight ? 'dark' : 'light');
+            document.getElementById('theme-icon').innerText = isLight ? '🌙' : '☀️';
+        }
+    </script>
+</body>
+</html>
